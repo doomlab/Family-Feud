@@ -1,0 +1,214 @@
+####Family Fued Study####
+#upload data sets
+setwd("~/Desktop/Family Fued")
+setwd("~/OneDrive - Missouri State University/RESEARCH/2 projects/Family Feud")
+AB = read.csv("AB_FF_Data.csv")
+#View(AB)
+CD = read.csv("CD_FF_Data.csv")
+#View(CD)
+newdata = read.csv("Points.csv")
+
+
+####Data Screening####
+###AB Set###
+
+##Accuracy
+#Categorical Variables
+table(AB$Number.of.People) #Includes One Group of One? (delete)
+table(AB$Condition, AB$Number.of.People)
+AB$Condition[AB$Number.of.People == 1] = "A.1 Single"
+table(AB$Condition) #Uneven But No Typos
+table(AB$Equal.Participation) #*Will Make No Missing Data
+notyposAB = AB
+
+#check for continuous problems, making sure only options are 1 and 0
+summary(notyposAB) #Looks Good
+
+#Missing Data
+#none
+
+#Outliers
+#Don't See How we could do an outlier ananlysis (0 and 1 only options)
+
+##Assumptions
+#Linearity
+random = rchisq(nrow(notyposAB), 7)
+fakeAB = lm(random~., data=notyposAB[ , -c(1,2,3,4)])
+standardizedAB = rstudent(fakeAB)
+qqnorm(standardizedAB)
+abline(0,1) 
+
+#Normality
+library(moments)
+
+skewness(notyposAB[ , -c(1,2,3,4)], na.rm=TRUE)
+kurtosis(notyposAB[ , -c(1,2,3,4)], na.rm=TRUE)
+hist(standardizedAB, breaks=15) #A Bit Skewed, but CLT
+
+##homogeneity and homoscedaticity
+fitvalues = scale(fakeAB$fitted.values)
+plot(fitvalues, standardizedAB) 
+abline(0,0)
+abline(v = 0)
+
+
+###CD Set###
+#Accuracy
+#Categorical Variables
+table(CD$Number.of.People) #Looks Good
+table(CD$Condition) #Fairly Even, Look Good
+table(CD$Condition, CD$Number.of.People)
+table(CD$Equal.Participation) #Random Little y, will change
+CD$Equal.Participation[CD$Equal.Participation == "y"] = "Y"
+CD$Equal.Participation = droplevels(CD$Equal.Participation)
+notyposCD = CD
+
+#check for continuous problems, looking for extreme  numbers, and no negatives
+summary(notyposCD) # Looks Good
+
+#Missing Data
+#none
+
+#Outliers
+#I don't think taking out someones guess as an outlier is appropriate analysis
+
+#Assumptions
+#Linearity
+randomCD = rchisq(nrow(notyposCD), 7)
+fakeCD = lm(randomCD~., data=notyposCD[ , -c(1,2,3,4)])
+standardizedCD = rstudent(fakeCD)
+qqnorm(standardizedCD)
+abline(0,1) #Good
+
+#Normality
+library(moments)
+skewness(notyposCD[ , -c(1,2,3,4)], na.rm=TRUE)
+kurtosis(notyposCD[ , -c(1,2,3,4)], na.rm=TRUE)
+hist(standardizedCD, breaks=15) #A Bit Skewed, but CLT
+
+#homogeneity and homoscedaticity
+fitvaluesCD = scale(fakeCD$fitted.values)
+plot(fitvaluesCD, standardizedCD) 
+abline(0,0)
+abline(v = 0)
+
+
+####Merging####
+master = rbind(notyposAB, notyposCD)
+View(master)
+
+####Melt####
+library(reshape)
+longmaster = melt(master, 
+                   id = c("Group.Name", "Number.of.People", "Condition", "Equal.Participation"), 
+                   measured = c("Cigarette", "Smoke", "Ash", "Butt", "Stomach", "Button", "Ache", "Dancer", "Fat", "Hair", "Tooth", "Comb", "Paint", "Store", "Food", "Shopping","Bag", "List", "Shampoo", "Hair.1", "Air", "Cold", "Cool", "Washer","Hair.2", "Clothes", "Heat", "Laundry", "Jump", "Ski", "Rabbit", "Bunny", "Scotch", "Paper", "Bed", "Blanket", "Music", "White", "Pillow", "Cover"))
+#Rename Columns
+colnames(longmaster)[5] = "Word"
+colnames(longmaster)[6] = "Correct"
+View(longmaster)
+
+#read in the other data
+#make sure the newdata has a column called Word
+#make sure Hair and Hair.1 are both rows 
+
+colnames(newdata)[1] = "Word"
+longmaster = merge(longmaster, newdata,
+                   by.x = "Word")
+
+####MLM####
+library(nlme)
+
+####version c versus d better in order or not####
+hyp1 = subset(longmaster, Condition == "C Singles" | Condition == "D Single")
+
+#Intercept Only Model
+model1 = gls(Correct ~ 1, 
+             data = hyp1, 
+             method = "ML", 
+             na.action = "na.omit")
+summary(model1)
+
+#Random Intercept Only Model
+model2 = lme(Correct ~ 1, 
+             data = hyp1, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~1|Group.Name)
+summary(model2)
+
+model2.1 = lme(Correct ~ 1, 
+               data = hyp1, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model2.1)
+
+model2.2 = lme(Correct ~ 1, 
+               data = hyp1, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Word))
+summary(model2.2)
+
+#Compare One and Two
+anova(model1, model2, model2.1)
+anova(model1, model2.2, model2.1) ##model 2.1 is actually worse than model 2.2 so just by word
+
+#Add Fixed Effects to the Model
+model3 = lme(Correct ~ Condition + Points, ##add in points 
+             data = hyp1, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~1|Word)
+summary(model3)
+
+#Compare One, Two and Three
+anova(model2.2, model3)
+
+##Interactions
+model4 = lme(Correct ~ Condition * Points, ##add in points 
+             data = hyp1, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~1|Word)
+summary(model4)
+
+anova(model3, model4)
+
+##simple slopes
+#group c slope
+#run model 3 on just group c
+
+#group d slope 
+#run model 3 on just group d
+
+#Random Slope Model
+model4 = lme(Correct ~ Word + Condition, 
+             data = hyp1, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~Condition|Group.Name,
+             control = lmeControl(msMaxIter = 200))
+summary(model4)
+
+##compare models
+anova(model1,model2,model3,model4)
+
+
+
+dgroup = subset(hyp1, Condition == "D Single")
+cgroup = subset(hyp1, Condition == "C Singles")
+
+model4.c = lme(Correct ~ Points, ##add in points 
+             data = cgroup, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~1|Word)
+summary(model4.c)
+
+model4.d = lme(Correct ~ Points, ##add in points 
+             data = dgroup, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~1|Word)
+summary(model4.d)
