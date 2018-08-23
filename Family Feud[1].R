@@ -1,7 +1,7 @@
 ####Family Fued Study####
 #upload data sets
 setwd("~/Desktop/Family Fued")
-setwd("~/OneDrive - Missouri State University/RESEARCH/2 projects/Family Feud")
+setwd("~/OneDrive - Missouri State University/RESEARCH/2 projects/Family-Feud")
 AB = read.csv("AB_FF_Data.csv")
 #View(AB)
 CD = read.csv("CD_FF_Data.csv")
@@ -101,7 +101,13 @@ View(master)
 library(reshape)
 longmaster = melt(master, 
                    id = c("Group.Name", "Number.of.People", "Condition", "Equal.Participation"), 
-                   measured = c("Cigarette", "Smoke", "Ash", "Butt", "Stomach", "Button", "Ache", "Dancer", "Fat", "Hair", "Tooth", "Comb", "Paint", "Store", "Food", "Shopping","Bag", "List", "Shampoo", "Hair.1", "Air", "Cold", "Cool", "Washer","Hair.2", "Clothes", "Heat", "Laundry", "Jump", "Ski", "Rabbit", "Bunny", "Scotch", "Paper", "Bed", "Blanket", "Music", "White", "Pillow", "Cover"))
+                   measured = c("Cigarette", "Smoke", "Ash", "Butt", "Stomach", 
+                                "Button", "Ache", "Dancer", "Fat", "Hair", "Tooth", 
+                                "Comb", "Paint", "Store", "Food", "Shopping","Bag", "List", 
+                                "Shampoo", "Hair.1", "Air", "Cold", "Cool", "Washer","Hair.2", 
+                                "Clothes", "Heat", "Laundry", "Jump", "Ski", "Rabbit", "Bunny", 
+                                "Scotch", "Paper", "Bed", "Blanket", "Music", "White", "Pillow", 
+                                "Cover"))
 #Rename Columns
 colnames(longmaster)[5] = "Word"
 colnames(longmaster)[6] = "Correct"
@@ -151,7 +157,8 @@ model2.2 = lme(Correct ~ 1,
 summary(model2.2)
 
 #Compare One and Two
-anova(model1, model2, model2.1)
+anova(model1, model2, model2.1) ## both is better than just group name
+anova(model1, model2.1) ##both better than nothing
 anova(model1, model2.2, model2.1) ##model 2.1 is actually worse than model 2.2 so just by word
 
 #Add Fixed Effects to the Model
@@ -196,23 +203,32 @@ model3.d = lme(Correct ~ Points,
                random = list(~1|Group.Name, ~1|Word))
 summary(model3.d)
 
-plot(hyp3$Points, hyp3$Correct)
+##group c
 plot(hyp2$Points, hyp2$Correct)
-
+##group d
+plot(hyp3$Points, hyp3$Correct)
 
 ###test a versus b###
 library(lme4)
 ##intercept only model
 ##gls = generalized linear model
-model1 = glm(rating ~ 1, 
-             data = data, 
+
+##just take A and B
+
+model1 = glm(Correct ~ 1, 
+             data = longmaster, 
              family = binomial(), 
              na.action = "na.omit")
 summary(model1)
 
 ##Model 2a = random intercept (participant) 
-####???????????##########
-model2a = glmer(rating ~ (1|part_no),
+
+##try just group, just word, then both see which best
+##main effects
+##interactions
+##simple slopes 
+
+model2a = glmer(Correct ~ (1|Group.Name) + (1|Word),
                 data = data,
                 family = binomial,
                 control = glmerControl(optimizer = "bobyqa"),
