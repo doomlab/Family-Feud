@@ -213,20 +213,81 @@ library(lme4)
 ##intercept only model
 ##gls = generalized linear model
 
-##just take A and B
-
-model1 = glm(Correct ~ 1, 
-             data = longmaster, 
+############just take A and B
+hyp3 = subset(longmaster, Condition == "B Single" | Condition == "A.1 Single")
+model5 = glm(Correct ~ 1, 
+             data = hyp3, 
              family = binomial(), 
              na.action = "na.omit")
-summary(model1)
+summary(model5)
 
 ##Model 2a = random intercept (participant) 
+model6 = lme(Correct ~ 1, 
+             data = hyp3, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~1|Group.Name)
+summary(model6)
 
-##try just group, just word, then both see which best
+model6.1 = lme(Correct ~ 1, 
+               data = hyp3, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model6.1)
+
+model6.2 = lme(Correct ~ 1, 
+               data = hyp3, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Word))
+summary(model6.2)
+
+#Compare
+anova(model5, model6, model6.1) 
+anova(model5, model6.1)
+anova(model5, model6.2, model6.1)
+
 ##main effects
+model7 = lme(Correct ~ Condition + Points, 
+             data = hyp3, 
+             method = "ML", 
+             na.action = "na.omit",             
+             random = list(~1|Group.Name, ~1|Word))
+summary(model7)
+
+#Compare One, Two and Three
+anova(model(best), model7)
+
+
 ##interactions
-##simple slopes 
+model8 = lme(Correct ~ Condition * Points, 
+             data = hyp3, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = list(~1|Group.Name, ~1|Word))
+summary(model4)
+
+anova(model3, model4)
+
+###simple slopes 
+#A Single Slope
+hyp4 = subset(longmaster, Condition == "A.1 Single")
+model3.c = lme(Correct ~ Points,
+               data = hyp4, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model3.c)
+
+#B Single Slope
+hyp5 = subset(longmaster, Condition == "B Single")
+model3.d = lme(Correct ~ Points,
+               data = hyp5, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model3.d)
 
 model2a = glmer(Correct ~ (1|Group.Name) + (1|Word),
                 data = data,
