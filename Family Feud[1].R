@@ -256,10 +256,6 @@ model7 = lme(Correct ~ Condition + Points,
              random = list(~1|Group.Name, ~1|Word))
 summary(model7)
 
-#Compare One, Two and Three
-anova(model(best), model7)
-
-
 ##interactions
 model8 = lme(Correct ~ Condition * Points, 
              data = hyp3, 
@@ -277,7 +273,7 @@ model3.c = lme(Correct ~ Points,
                data = hyp4, 
                method = "ML", 
                na.action = "na.omit",
-               random = list(~1|Group.Name, ~1|Word))
+               random = list(~1|Group.Name, ~1|Word)) ###Does Not Run
 summary(model3.c)
 
 #B Single Slope
@@ -286,38 +282,25 @@ model3.d = lme(Correct ~ Points,
                data = hyp5, 
                method = "ML", 
                na.action = "na.omit",
-               random = list(~1|Group.Name, ~1|Word))
+               random = list(~1|Group.Name, ~1|Word)) ###Does Run
 summary(model3.d)
 
 model2a = glmer(Correct ~ (1|Group.Name) + (1|Word),
-                data = data,
+                data = hyp5,
                 family = binomial,
                 control = glmerControl(optimizer = "bobyqa"),
                 nAGQ = 1)
 summary(model2a)
-###########################################
-
-##compare those two models
-anova(model1, model2a)
-
-#________________________________________________
-##Model 2b = random intercept (participant + word)
-model2b = glmer(rating ~ word + (1|part_no),
-                data = data,
-                family = binomial,
-                control = glmerControl(optimizer = "bobyqa"),
-                nAGQ = 1)
-summary(model2b)
-
-#________________________________________________
 
 ##Fixed Effects
-model3a = glmer(rating ~ math + (1|part_no), 
-                data = data, 
+model3a = glmer(Correct ~ (1|Group.Name) + (1|Word), 
+                data = hyp3, 
                 family = binomial(), 
                 control = glmerControl(optimizer = "bobyqa"),
                 nAGQ = 1)
 summary(model3a)
+###########################################
+
 
 
 
