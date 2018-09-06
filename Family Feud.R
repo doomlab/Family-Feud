@@ -295,3 +295,76 @@ model3.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
                control = glmerControl(optimizer = "bobyqa"),
                nAGQ = 1)
 summary(model3.d)
+
+# A Singles Versus Groups -------------------------------------------------
+
+hyp6 = subset(longmaster, Condition == "A Group" | Condition == "A.1 Single")
+model9 = glm(Correct ~ 1, 
+             data = hyp6, 
+             family = binomial(), 
+             na.action = "na.omit")
+summary(model9) #AIC is 10049
+
+##Model 2a = random intercept (participant) 
+model10 = glmer(Correct ~ (1|Group.Name), 
+                data = hyp6,
+                family = binomial,
+                control = glmerControl(optimizer = "bobyqa"),
+                nAGQ = 1)
+summary(model10) #AIC is 10003.7
+
+model10.1 = glmer(Correct ~ (1|Group.Name) + (1|Word), 
+                  data = hyp6,
+                  family = binomial,
+                  control = glmerControl(optimizer = "bobyqa"),
+                  nAGQ = 1)
+summary(model10.1) #AIC is 7491.9 ****
+
+model10.2 = glmer(Correct ~ (1|Word), 
+                  data = hyp6,
+                  family = binomial,
+                  control = glmerControl(optimizer = "bobyqa"),
+                  nAGQ = 1)
+summary(model10.2) #AIC is 7631
+
+#Compare
+anova(model9, model10, model10.1) 
+anova(model9, model10.1)
+anova(model9, model10.2, model10.1)
+
+##main effects
+model11 = glmer(Correct ~ Condition + Points + (1|Group.Name) + (1|Word) ,
+                data = hyp6,
+                family = binomial,
+                control = glmerControl(optimizer = "bobyqa"),
+                nAGQ = 1)
+summary(model11) #AIC is 7373.2, all significant 
+
+##interactions
+model11.1 = glmer(Correct ~ Condition * Points + (1|Group.Name) + (1|Word), 
+                  data = hyp6,
+                  family = binomial,
+                  control = glmerControl(optimizer = "bobyqa"),
+                  nAGQ = 1)
+summary(model11.1) #AIC is 7368.7, All significant
+
+anova(model11, model11.1) ##SIGNIFICANT
+
+###simple slopes 
+#A Single Slope
+hyp7 = subset(longmaster, Condition == "A.1 Single")
+model11.c = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
+                  data = hyp7,
+                  family = binomial,
+                  control = glmerControl(optimizer = "bobyqa"),
+                  nAGQ = 1)
+summary(model3.c) #AIC is 2650.5, all significant
+
+#A Group
+hyp8 = subset(longmaster, Condition == "A Group")
+model11.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
+                  data = hyp8,
+                  family = binomial,
+                  control = glmerControl(optimizer = "bobyqa"),
+                  nAGQ = 1) 
+summary(model11.d) #AIC is 4775.7, Not Significant
