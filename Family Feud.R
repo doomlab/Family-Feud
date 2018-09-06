@@ -1,7 +1,7 @@
 ####Family Fued Study####
 #upload data sets
-setwd("~/Desktop/Family Fued")
-setwd("~/OneDrive - Missouri State University/RESEARCH/2 projects/Family Feud")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 AB = read.csv("AB_FF_Data.csv")
 #View(AB)
 CD = read.csv("CD_FF_Data.csv")
@@ -101,7 +101,13 @@ View(master)
 library(reshape)
 longmaster = melt(master, 
                    id = c("Group.Name", "Number.of.People", "Condition", "Equal.Participation"), 
-                   measured = c("Cigarette", "Smoke", "Ash", "Butt", "Stomach", "Button", "Ache", "Dancer", "Fat", "Hair", "Tooth", "Comb", "Paint", "Store", "Food", "Shopping","Bag", "List", "Shampoo", "Hair.1", "Air", "Cold", "Cool", "Washer","Hair.2", "Clothes", "Heat", "Laundry", "Jump", "Ski", "Rabbit", "Bunny", "Scotch", "Paper", "Bed", "Blanket", "Music", "White", "Pillow", "Cover"))
+                   measured = c("Cigarette", "Smoke", "Ash", "Butt", "Stomach", 
+                                "Button", "Ache", "Dancer", "Fat", "Hair", "Tooth", 
+                                "Comb", "Paint", "Store", "Food", "Shopping","Bag", "List", 
+                                "Shampoo", "Hair.1", "Air", "Cold", "Cool", "Washer","Hair.2", 
+                                "Clothes", "Heat", "Laundry", "Jump", "Ski", "Rabbit", "Bunny", 
+                                "Scotch", "Paper", "Bed", "Blanket", "Music", "White", "Pillow", 
+                                "Cover"))
 #Rename Columns
 colnames(longmaster)[5] = "Word"
 colnames(longmaster)[6] = "Correct"
@@ -151,26 +157,27 @@ model2.2 = lme(Correct ~ 1,
 summary(model2.2)
 
 #Compare One and Two
-anova(model1, model2, model2.1)
+anova(model1, model2, model2.1) ## both is better than just group name
+anova(model1, model2.1) ##both better than nothing
 anova(model1, model2.2, model2.1) ##model 2.1 is actually worse than model 2.2 so just by word
 
 #Add Fixed Effects to the Model
-model3 = lme(Correct ~ Condition + Points, ##add in points 
+model3 = lme(Correct ~ Condition + Points, 
              data = hyp1, 
              method = "ML", 
-             na.action = "na.omit",
-             random = ~1|Word)
+             na.action = "na.omit",             
+             random = list(~1|Group.Name, ~1|Word))
 summary(model3)
 
 #Compare One, Two and Three
 anova(model2.2, model3)
 
 ##Interactions
-model4 = lme(Correct ~ Condition * Points, ##add in points 
+model4 = lme(Correct ~ Condition * Points, 
              data = hyp1, 
              method = "ML", 
              na.action = "na.omit",
-             random = ~1|Word)
+             random = list(~1|Group.Name, ~1|Word))
 summary(model4)
 
 anova(model3, model4)
@@ -178,37 +185,113 @@ anova(model3, model4)
 ##simple slopes
 #group c slope
 #run model 3 on just group c
+hyp2 = subset(longmaster, Condition == "C Singles")
+model3.c = lme(Correct ~ Points,
+             data = hyp2, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = list(~1|Group.Name, ~1|Word))
+summary(model3.c)
 
 #group d slope 
 #run model 3 on just group d
+hyp3 = subset(longmaster, Condition == "D Single")
+model3.d = lme(Correct ~ Points,
+               data = hyp3, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model3.d)
 
-#Random Slope Model
-model4 = lme(Correct ~ Word + Condition, 
-             data = hyp1, 
-             method = "ML", 
+##group c
+plot(hyp2$Points, hyp2$Correct)
+##group d
+plot(hyp3$Points, hyp3$Correct)
+
+###test a versus b###
+library(lme4)
+##intercept only model
+##gls = generalized linear model
+
+
+# A versus B --------------------------------------------------------------
+library(lme4)
+
+############just take A and B
+hyp3 = subset(longmaster, Condition == "B Single" | Condition == "A.1 Single")
+model5 = glm(Correct ~ 1, 
+             data = hyp3, 
+             family = binomial(), 
+             na.action = "na.omit")
+summary(model5)
+
+##Model 2a = random intercept (participant) 
+model6 = glmer(Correct ~ 1 + (1|Group.Name), 
+             data = hyp3, 
              na.action = "na.omit",
-             random = ~Condition|Group.Name,
-             control = lmeControl(msMaxIter = 200))
-summary(model4)
+             family = binomial,
+             control = glmerControl(optimizer = "bobyqa"),
+             nAGQ = 1)
+summary(model6)
 
-##compare models
-anova(model1,model2,model3,model4)
+model6.1 = glmer(Correct ~ 1 + (1|Group.Name) + (1|Word), 
+               data = hyp3, 
+               na.action = "na.omit",
+               family = binomial,
+               control = glmerControl(optimizer = "bobyqa"),
+               nAGQ = 1)
+summary(model6.1)
 
+model6.2 = glmer(Correct ~ 1 + (1|Word), 
+               data = hyp3, 
+               na.action = "na.omit",
+               family = binomial,
+               control = glmerControl(optimizer = "bobyqa"),
+               nAGQ = 1)
+summary(model6.2)
 
+#Compare
+anova(model5, model6, model6.1) 
+anova(model5, model6.1)
+anova(model5, model6.2, model6.1)
 
-dgroup = subset(hyp1, Condition == "D Single")
-cgroup = subset(hyp1, Condition == "C Singles")
-
-model4.c = lme(Correct ~ Points, ##add in points 
-             data = cgroup, 
-             method = "ML", 
+##main effects
+model7 = glmer(Correct ~ Condition + Points + (1|Group.Name) + (1|Word), 
+             data = hyp3, 
              na.action = "na.omit",
-             random = ~1|Word)
-summary(model4.c)
+             family = binomial,
+             control = glmerControl(optimizer = "bobyqa"),
+             nAGQ = 1)
+summary(model7)
 
-model4.d = lme(Correct ~ Points, ##add in points 
-             data = dgroup, 
-             method = "ML", 
+##interactions
+model8 = glmer(Correct ~ Condition * Points + (1|Group.Name) + (1|Word), 
+             data = hyp3, 
              na.action = "na.omit",
-             random = ~1|Word)
-summary(model4.d)
+             family = binomial,
+             control = glmerControl(optimizer = "bobyqa"),
+             nAGQ = 1)
+summary(model8)
+
+anova(model7, model8)
+
+###simple slopes 
+#A Single Slope
+hyp4 = subset(longmaster, Condition == "A.1 Single")
+model3.c = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
+               data = hyp4, 
+               na.action = "na.omit",
+               family = binomial,
+               control = glmerControl(optimizer = "bobyqa"),
+               nAGQ = 1)
+summary(model3.c)
+
+#B Single Slope
+hyp5 = subset(longmaster, Condition == "B Single")
+model3.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
+               data = hyp5, 
+               na.action = "na.omit",
+               family = binomial,
+               control = glmerControl(optimizer = "bobyqa"),
+               nAGQ = 1)
+summary(model3.d)
