@@ -292,13 +292,6 @@ model2a = glmer(Correct ~ (1|Group.Name) + (1|Word),
                 nAGQ = 1)
 summary(model2a)
 
-##Fixed Effects
-model3a = glmer(Correct ~ (1|Group.Name) + (1|Word), 
-                data = hyp3, 
-                family = binomial(), 
-                control = glmerControl(optimizer = "bobyqa"),
-                nAGQ = 1)
-summary(model3a)
 ###########################################
 
 
