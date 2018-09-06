@@ -1,7 +1,6 @@
 ####Family Fued Study####
 #upload data sets
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
 AB = read.csv("AB_FF_Data.csv")
 #View(AB)
 CD = read.csv("CD_FF_Data.csv")
@@ -9,9 +8,9 @@ CD = read.csv("CD_FF_Data.csv")
 newdata = read.csv("Points.csv")
 
 
-####Data Screening####
-###AB Set###
 
+# Data Screening ----------------------------------------------------------
+###AB Set###
 ##Accuracy
 #Categorical Variables
 table(AB$Number.of.People) #Includes One Group of One? (delete)
@@ -93,11 +92,15 @@ abline(0,0)
 abline(v = 0)
 
 
-####Merging####
+
+# Merging -----------------------------------------------------------------
+
 master = rbind(notyposAB, notyposCD)
 View(master)
 
-####Melt####
+
+# Melting -----------------------------------------------------------------
+
 library(reshape)
 longmaster = melt(master, 
                    id = c("Group.Name", "Number.of.People", "Condition", "Equal.Participation"), 
@@ -121,10 +124,12 @@ colnames(newdata)[1] = "Word"
 longmaster = merge(longmaster, newdata,
                    by.x = "Word")
 
-####MLM####
+
+# MLM ---------------------------------------------------------------------
+
 library(nlme)
 
-####version c versus d better in order or not####
+# C Versus D --------------------------------------------------------------
 hyp1 = subset(longmaster, Condition == "C Singles" | Condition == "D Single")
 
 #Intercept Only Model
@@ -208,16 +213,10 @@ plot(hyp2$Points, hyp2$Correct)
 ##group d
 plot(hyp3$Points, hyp3$Correct)
 
-###test a versus b###
-library(lme4)
-##intercept only model
-##gls = generalized linear model
-
 
 # A versus B --------------------------------------------------------------
-library(lme4)
 
-############just take A and B
+library(lme4)
 hyp3 = subset(longmaster, Condition == "B Single" | Condition == "A.1 Single")
 model5 = glm(Correct ~ 1, 
              data = hyp3, 
@@ -368,3 +367,8 @@ model11.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
                   control = glmerControl(optimizer = "bobyqa"),
                   nAGQ = 1) 
 summary(model11.d) #AIC is 4775.7, Not Significant
+
+
+# D Groups Versus D Single ------------------------------------------------
+
+
