@@ -370,5 +370,80 @@ summary(model11.d) #AIC is 4775.7, Not Significant
 
 
 # D Groups Versus D Single ------------------------------------------------
+hyp9 = subset(longmaster, Condition == "D Groups" | Condition == "D Single")
+
+#Intercept Only Model
+model12 = gls(Correct ~ 1, 
+             data = hyp9, 
+             method = "ML", 
+             na.action = "na.omit")
+summary(model12) #AIC is 17228.86
+
+#Random Intercept Only Model
+model13 = lme(Correct ~ 1, 
+             data = hyp9, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = ~1|Group.Name)
+summary(model13) #AIC is 17206.12
+
+model13.1 = lme(Correct ~ 1, 
+               data = hyp9, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model13.1) #AIC is 17208.12
+
+model13.2 = lme(Correct ~ 1, 
+               data = hyp9, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Word))
+summary(model13.2) #AIC is 16694.06 ****
+
+#Compare Thirteen and Twelve
+anova(model12, model13, model13.1) 
+anova(model12, model13.1) 
+anova(model12, model13.2, model13.1) 
+
+#Add Fixed Effects to the Model
+model14 = lme(Correct ~ Condition + Points, 
+             data = hyp9, 
+             method = "ML", 
+             na.action = "na.omit",             
+             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run
+summary(model14)
+
+#Compare One, Two and Three
+anova(model, model14)
+
+##Interactions
+model15 = lme(Correct ~ Condition * Points, 
+             data = hyp9, 
+             method = "ML", 
+             na.action = "na.omit",
+             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run
+summary(model15)
+
+anova(model14, model15)
+
+###Simple Slopes
+#D Single
+hyp10 = subset(longmaster, Condition == "D Single")
+model16 = lme(Correct ~ Points,
+               data = hyp10, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model16) #AIC is 16735.43, significant
+
+#D Group
+hyp11 = subset(longmaster, Condition == "D Group")
+model17 = lme(Correct ~ Points,
+               data = hyp11, 
+               method = "ML", 
+               na.action = "na.omit",
+               random = list(~1|Group.Name, ~1|Word))
+summary(model17) #AIC is 21488.97, significant
 
 
