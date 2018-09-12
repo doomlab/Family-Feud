@@ -128,6 +128,7 @@ longmaster = merge(longmaster, newdata,
 # MLM ---------------------------------------------------------------------
 
 library(nlme)
+library(lme4)
 
 # C Versus D --------------------------------------------------------------
 hyp1 = subset(longmaster, Condition == "C Singles" | Condition == "D Single")
@@ -216,7 +217,7 @@ plot(hyp3$Points, hyp3$Correct)
 
 # A versus B --------------------------------------------------------------
 
-library(lme4)
+
 hyp3 = subset(longmaster, Condition == "B Single" | Condition == "A.1 Single")
 model5 = glm(Correct ~ 1, 
              data = hyp3, 
@@ -326,7 +327,7 @@ model10.2 = glmer(Correct ~ (1|Word),
                   nAGQ = 1)
 summary(model10.2) #AIC is 7631
 
-#Compare
+#Compare, Doesn't give much info
 anova(model9, model10, model10.1) 
 anova(model9, model10.1)
 anova(model9, model10.2, model10.1)
@@ -357,7 +358,7 @@ model11.c = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
                   family = binomial,
                   control = glmerControl(optimizer = "bobyqa"),
                   nAGQ = 1)
-summary(model3.c) #AIC is 2650.5, all significant
+summary(model11.c) #AIC is 2650.5, all significant
 
 #A Group
 hyp8 = subset(longmaster, Condition == "A Group")
@@ -366,7 +367,7 @@ model11.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
                   family = binomial,
                   control = glmerControl(optimizer = "bobyqa"),
                   nAGQ = 1) 
-summary(model11.d) #AIC is 4775.7, Not Significant
+summary(model11.d) #AIC is 4775.7, significant
 
 
 # D Groups Versus D Single ------------------------------------------------
