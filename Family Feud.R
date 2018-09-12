@@ -7,7 +7,11 @@ CD = read.csv("CD_FF_Data.csv")
 #View(CD)
 newdata = read.csv("Points.csv")
 
-
+# Load Libraries ----------------------------------------------------------
+library(moments)
+library(reshape)
+library(nlme)
+library(lme4)
 
 # Data Screening ----------------------------------------------------------
 ###AB Set###
@@ -39,7 +43,6 @@ abline(0,1)
 
 #Normality
 library(moments)
-
 skewness(notyposAB[ , -c(1,2,3,4)], na.rm=TRUE)
 kurtosis(notyposAB[ , -c(1,2,3,4)], na.rm=TRUE)
 hist(standardizedAB, breaks=15) #A Bit Skewed, but CLT
@@ -130,6 +133,9 @@ longmaster = merge(longmaster, newdata,
 library(nlme)
 library(lme4)
 
+
+
+
 # C Versus D --------------------------------------------------------------
 hyp1 = subset(longmaster, Condition == "C Singles" | Condition == "D Single")
 
@@ -215,6 +221,11 @@ plot(hyp2$Points, hyp2$Correct)
 plot(hyp3$Points, hyp3$Correct)
 
 
+
+
+
+
+
 # A versus B --------------------------------------------------------------
 
 
@@ -296,6 +307,13 @@ model3.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
                nAGQ = 1)
 summary(model3.d)
 
+
+
+
+
+
+
+
 # A Singles Versus Groups -------------------------------------------------
 
 hyp6 = subset(longmaster, Condition == "A Group" | Condition == "A.1 Single")
@@ -318,7 +336,7 @@ model10.1 = glmer(Correct ~ (1|Group.Name) + (1|Word),
                   family = binomial,
                   control = glmerControl(optimizer = "bobyqa"),
                   nAGQ = 1)
-summary(model10.1) #AIC is 7491.9 ****
+summary(model10.1) #AIC is 7491.9 ****, both is best model
 
 model10.2 = glmer(Correct ~ (1|Word), 
                   data = hyp6,
@@ -346,9 +364,9 @@ model11.1 = glmer(Correct ~ Condition * Points + (1|Group.Name) + (1|Word),
                   family = binomial,
                   control = glmerControl(optimizer = "bobyqa"),
                   nAGQ = 1)
-summary(model11.1) #AIC is 7368.7, All significant
+summary(model11.1) #AIC is 7368.7, all significant
 
-anova(model11, model11.1) ##SIGNIFICANT
+anova(model11, model11.1) ##significant
 
 ###simple slopes 
 #A Single Slope
@@ -368,6 +386,12 @@ model11.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
                   control = glmerControl(optimizer = "bobyqa"),
                   nAGQ = 1) 
 summary(model11.d) #AIC is 4775.7, significant
+
+
+
+
+
+
 
 
 # D Groups Versus D Single ------------------------------------------------
@@ -393,14 +417,14 @@ model13.1 = lme(Correct ~ 1,
                method = "ML", 
                na.action = "na.omit",
                random = list(~1|Group.Name, ~1|Word))
-summary(model13.1) #AIC is 17208.12
+summary(model13.1) #AIC is 17208.12, really close to model13
 
 model13.2 = lme(Correct ~ 1, 
                data = hyp9, 
                method = "ML", 
                na.action = "na.omit",
                random = list(~1|Word))
-summary(model13.2) #AIC is 16694.06 ****
+summary(model13.2) #AIC is 16694.06 ****, only word is best model
 
 #Compare Thirteen and Twelve
 anova(model12, model13, model13.1) 
