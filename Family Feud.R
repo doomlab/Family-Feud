@@ -423,16 +423,16 @@ model13.2 = lme(Correct ~ 1,
 summary(model13.2) #AIC is 16694.06 ****, only word is best model
 
 #Compare Thirteen and Twelve
-anova(model12, model13, model13.1) 
-anova(model12, model13.1) 
-anova(model12, model13.2, model13.1) 
+anova(model12, model13, model13.1) # model 3 is significant
+anova(model12, model13.1) #model 3.1 is significant
+anova(model12, model13.2, model13.1) #All significant
 
 #Add Fixed Effects to the Model
 model14 = lme(Correct ~ Condition + Points, 
              data = hyp9, 
              method = "ML", 
              na.action = "na.omit",             
-             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run
+             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run, grr
 summary(model14)
 
 #Compare One, Two and Three
@@ -443,7 +443,7 @@ model15 = lme(Correct ~ Condition * Points,
              data = hyp9, 
              method = "ML", 
              na.action = "na.omit",
-             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run
+             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run, gah
 summary(model15)
 
 anova(model14, model15)
