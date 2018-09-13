@@ -391,7 +391,7 @@ summary(model11.d) #AIC is 4775.7, significant
 
 
 # D Groups Versus D Single ------------------------------------------------
-hyp9 = subset(longmaster, Condition == "D Groups" | Condition == "D Single")
+hyp9 = subset(longmaster, Condition == "D Group" | Condition == "D Single")
 
 #Intercept Only Model
 model12 = gls(Correct ~ 1, 
@@ -432,7 +432,7 @@ model14 = lme(Correct ~ Condition + Points,
              data = hyp9, 
              method = "ML", 
              na.action = "na.omit",             
-             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run, grr
+             random = list(~1|Group.Name, ~1|Word))
 summary(model14)
 
 #Compare One, Two and Three
@@ -443,7 +443,7 @@ model15 = lme(Correct ~ Condition * Points,
              data = hyp9, 
              method = "ML", 
              na.action = "na.omit",
-             random = list(~1|Group.Name, ~1|Word)) #Doesn't Run, gah
+             random = list(~1|Group.Name, ~1|Word)) 
 summary(model15)
 
 anova(model14, model15)
