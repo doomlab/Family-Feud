@@ -128,10 +128,6 @@ longmaster = merge(longmaster, newdata,
                    by.x = "Word")
 
 
-# MLM ---------------------------------------------------------------------
-
-library(nlme)
-library(lme4)
 
 
 
