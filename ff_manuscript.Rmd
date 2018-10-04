@@ -1,0 +1,156 @@
+---
+title             : "Gamifying Judgments of Associative Memory"
+shorttitle        : "JAM GAME"
+
+author: 
+  - name          : "Erin M. Buchanan"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "901 S. National Ave, Springfield, MO, 65897"
+    email         : "erinbuchanan@missouristate.edu"
+  - name          : "Abigail Van Nuland"
+    affiliation   : "1"
+
+affiliation:
+  - id            : "1"
+    institution   : "Missouri State University"
+
+authornote: |
+  Erin M. Buchanan is an Associate Professor of Quantitative Psychology at Missouri State University, and Abigail Van Nuland is a Masters Degree candidate at Missouri State Univeristy. 
+
+  Enter author note here.
+
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  
+  One or two sentences to put the results into a more **general context**.
+  
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "judgments, word association, metacognition"
+
+#bibliography      : ["r-references.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+We are going to write an introduction here about JAM, association, and stuff. 
+
+1) In a traditional free association task, people guess the words...would the numbers help? (a v b)
+2) In a JAM task with multiple guesses, they would normally see the words, would expect them to be able to guess better if they know it's descending order, so the D condition would match the normal JAM slope and C should be better (this answers the bounded question).
+3) For the non-numbers condition, see if singles or groups are better. Shouldn't more heads be better than one?
+4) For the normal JAM task, see if groups are better than singles at guessing the numbers. 
+
+# Method
+
+## Participants
+
+## Material
+
+## Procedure
+
+four different versions 
+two of the versions included single participants versus groups of participants (a and d)
+
+### Version A
+
+guess the words, no numbers present
+three guesses wrong and we moved on
+most matches a traditional free association task 
+
+### Version B
+
+guess the words, numbers were present
+three guesses wrong and we moved on
+
+### Version C
+
+guess the numbers, words were in numerical order
+1 guess to get it right and they were considered right if it was within five points
+
+### Version D
+
+guess the numbers, words were NOT in numerical order
+1 guess to get it right and they were considered right if it was within five points
+most matches a JAM task 
+
+## Data analysis
+
+Going to talk here about MLM and Log regression as the analyses of choice because they are the most appropriate. 
+
+# Results
+
+## Hypothesis 1
+•	Version A versus B – would answer if the number helped them guess or not
+o	Multilevel log regression 
+o	Random: participant, word?
+o	IVs: Version, Points (sort of L, M, H words)
+o	DV: correct (1) versus incorrect (0)
+
+## Hypothesis 2
+•	Version C versus D – would answer if we are better if they are in order or not
+o	Multilevel regression 
+o	Random: participant, word?
+o	IVs: Version, Points (sort of L, M, H words)
+o	DV: Score they guessed 
+
+## Hypothesis 3
+•	Version A singles versus Groups
+o	Multilevel log regression 
+o	Random: participant, word?
+o	IVs: Singles/Groups, Points (sort of L, M, H words)
+o	DV: correct (1) versus incorrect (0) 
+
+## Hypothesis 4
+•	Version D singles versus Groups
+o	Multilevel regression 
+o	Random: participant, word?
+o	IVs: Singles/groups, Points (sort of L, M, H words)
+o	DV: Score they guessed 
+
+# Discussion
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id = "refs"></div>
+\endgroup
