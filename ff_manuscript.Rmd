@@ -52,17 +52,9 @@ draft             : no
 documentclass     : "apa6"
 classoption       : "man"
 output            : papaja::apa6_pdf
+replace_ampersands: yes
+csl               : apa6.csl
 ---
-
-```{r setup, include = FALSE}
-library("papaja")
-```
-
-```{r analysis-preferences}
-# Seed for random number generation
-set.seed(42)
-knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
-```
 
 We are going to write an introduction here about JAM, association, and stuff. 
 
@@ -71,62 +63,29 @@ We are going to write an introduction here about JAM, association, and stuff.
 3) For the non-numbers condition, see if singles or groups are better. Shouldn't more heads be better than one?
 4) For the normal JAM task, see if groups are better than singles at guessing the numbers. 
 
+Judgments of associative memory are notoriously poor (Buchanan, 2009; Maki, 2007), where participants over estimate the relationship between word pairs.  In the judgment task, participants are given two words (LOST-FOUND) and asked to rate how many people out of a 100 would list the second word if given the first word.  Participants cannot tell the difference between low and high frequency pairs and tend to judge pairs higher than they should.  The psycholinguistics lab has tried to correct these memory judgments by giving participants various instructions (Buchanan & Maki, in preparation), changing the scales for judgments (Buchanan, data analysis), changing the judgment type (Maki & Buchanan, in preparation), and having participants judge their own ratings over time (Buchanan, data collection).  These manipulations have shown a small effect on judgment ability, mainly to reduce the overall bias to select very large numbers.  The current protocol will examine if judgments are more accurate when the experimental task is more interesting and engaging.  We will be using the game show Family Feud as the experimental procedure because the game show closely matches the judgments of memory paradigm currently used.
+
+```{r setup, include = FALSE}
+# Load Libraries ----------------------------------------------------------
+library("papaja")
+library(moments)
+library(reshape)
+library(nlme)
+library(lme4)
+```
+
 # Method
 
-## Participants
-
-## Material
-
-## Procedure
-
-four different versions 
-two of the versions included single participants versus groups of participants (a and d)
-
-### Version A
-
-guess the words, no numbers present
-three guesses wrong and we moved on
-most matches a traditional free association task 
-
-### Version B
-
-guess the words, numbers were present
-three guesses wrong and we moved on
-
-### Version C
-
-guess the numbers, words were in numerical order
-1 guess to get it right and they were considered right if it was within five points
-
-### Version D
-
-guess the numbers, words were NOT in numerical order
-1 guess to get it right and they were considered right if it was within five points
-most matches a JAM task 
-
-## Data analysis
-
-Going to talk here about MLM and Log regression as the analyses of choice because they are the most appropriate. 
-
-# Results
-```{r Upload Data}
+```{r Upload_Data, include = FALSE}
 #upload data sets
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 AB = read.csv("AB_FF_Data.csv")
 #View(AB)
 CD = read.csv("CD_FF_Data.csv")
 #View(CD)
 newdata = read.csv("Points.csv")
-
 ```
 
-
-```{r data screening}
-# Load Libraries ----------------------------------------------------------
-library(moments)
-library(reshape)
-library(nlme)
-library(lme4)
+```{r data_screening, include=FALSE}
 
 # Data Screening ----------------------------------------------------------
 ###AB Set###
@@ -157,7 +116,6 @@ qqnorm(standardizedAB)
 abline(0,1) 
 
 #Normality
-library(moments)
 skewness(notyposAB[ , -c(1,2,3,4)], na.rm=TRUE)
 kurtosis(notyposAB[ , -c(1,2,3,4)], na.rm=TRUE)
 hist(standardizedAB, breaks=15) #A Bit Skewed, but CLT
@@ -167,7 +125,6 @@ fitvalues = scale(fakeAB$fitted.values)
 plot(fitvalues, standardizedAB) 
 abline(0,0)
 abline(v = 0)
-
 
 ###CD Set###
 #Accuracy
@@ -198,7 +155,6 @@ qqnorm(standardizedCD)
 abline(0,1) #Good
 
 #Normality
-library(moments)
 skewness(notyposCD[ , -c(1,2,3,4)], na.rm=TRUE)
 kurtosis(notyposCD[ , -c(1,2,3,4)], na.rm=TRUE)
 hist(standardizedCD, breaks=15) #A Bit Skewed, but CLT
@@ -209,13 +165,10 @@ plot(fitvaluesCD, standardizedCD)
 abline(0,0)
 abline(v = 0)
 
-
-
 # Merging -----------------------------------------------------------------
 
 master = rbind(notyposAB, notyposCD)
-View(master)
-
+#View(master)
 
 # Melting -----------------------------------------------------------------
 
@@ -232,7 +185,7 @@ longmaster = melt(master,
 #Rename Columns
 colnames(longmaster)[5] = "Word"
 colnames(longmaster)[6] = "Correct"
-View(longmaster)
+#View(longmaster)
 
 #read in the other data
 #make sure the newdata has a column called Word
@@ -241,7 +194,62 @@ View(longmaster)
 colnames(newdata)[1] = "Word"
 longmaster = merge(longmaster, newdata,
                    by.x = "Word")
+
+longmaster$Number.of.People[is.na(longmaster$Number.of.People)] = 1
+part_temp = longmaster[ !duplicated(longmaster$Group.Name) , ]
 ```
+
+## Participants
+
+Participants were recruited from the Psychology Department at a large Midwestern university using an online participant management system. They were given course credit for their participation in the study. Participants were assigned to work alone (`r nrow(part_temp[grep("Single", part_temp$Condition) , ])`) or in groups (`r nrow(part_temp[grep("Group", part_temp$Condition) , ])` groups, `r sum(part_temp$Number.of.People[grep("Group", part_temp$Condition)])`) with a total of `r nrow(part_temp)` sessions and `r sum(part_temp$Number.of.People)` completing the study. No other demographic information was collected. 
+
+## Materials
+
+Stimuli were selected from the University of South Florida Free Association Database [@Nelson2004]. Free association norms were created by asking participants to list the first word that comes to mind given a cue word. For example, when shown the cue *lost*, many participants will then list the target word *found*. These responses were collected over many participants and use the create a probability of eliciting the target word given a cue word called forward strength (FSG).  
+
+Stimuli will be selected from the Nelson et al. (2004) free association database.  In Family Feud, participants are asked to guess items “100 people on the street” listed when given a category label.  For example, when given the category CHORES, many people listed DISHES, LAUNDRY, and VACUUMING.  The free association database was collected in roughly the same format.  Participants were given a concept (LOST) and asked to list the first word that came to mind (FOUND).  These responses were then averaged over participants to create a probability of each response or the number of times, out of 100, that someone would say that word.  Category labels for the game will be selected from the database with at least four matching target words.  The cue word will be used for the rounds, and each target word will be used for participants to guess. 
+
+## Procedure
+
+four different versions 
+two of the versions included single participants versus groups of participants (a and d)
+
+### Version A
+
+guess the words, no numbers present
+three guesses wrong and we moved on
+most matches a traditional free association task 
+
+### Version B
+
+guess the words, numbers were present
+three guesses wrong and we moved on
+
+### Version C
+
+guess the numbers, words were in numerical order
+1 guess to get it right and they were considered right if it was within five points
+
+### Version D
+
+guess the numbers, words were NOT in numerical order
+1 guess to get it right and they were considered right if it was within five points
+most matches a JAM task 
+
+First, participants will be given a consent form to sign.  An experimenter will be with the participant at all times to keep score and be the game show host.  The rules of the game will be explained to the participant as follows: “You will be playing Family Feud for your experimental credit today.  We asked 100 people to say the first thing they thought of when given each category you are going to see today.  For example, when we gave people the word “steak” many of them listed “sauce, cow, sirloin”.  In the following rounds, you will guess what words people listed.  (OR you will guess the number of people who listed each word)  You will receive points for your correct guesses.  Try to beat the high lab score!”
+
+Participants will be in one of three conditions:
+•	Regular Family Feud:  This condition is played like the game show.  Participants are given the category label and asked to guess four words that people listed.  They are given three strikes at guessing before moving onto the next round.  When they guess a correct word, they are shown the word and points on a computer screen.  The experimenter will keep score.
+•	Numbered Family Feud:  This condition is the same as above, with one exception.  Participants will be able to see the number of people who listed each word next to the ? on each category label.  This condition will examine if participants have an easier or harder time guessing with the scores listed.
+•	Reverse Family Feud:  This condition is played where participants are required the guess the number of people who listed each word under a category, mirroring the judgments of associative memory task previously used by the researcher.  They will be told to guess within 10-20 people of the words (this number will be pilot tested by the lab assistants to find the range that allows participants to “win”).  
+The research assistants will pilot test all three conditions to come up with high scores for the game.  The scores will be biased lower, so that participants can almost always score in the high score range.  These scores will be posted in the lab for participants to try to beat.  The first experiment will test participants individually, to eliminate any social facilitation and create a control group.  The second experiment will test participants in pairs/threes to analyze judgments in groups.
+
+
+## Data analysis
+
+Going to talk here about MLM and Log regression as the analyses of choice because they are the most appropriate. 
+
+# Results
 
 ## Hypothesis 1
 •	Version A versus B – would answer if the number helped them guess or not
