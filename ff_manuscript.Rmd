@@ -353,12 +353,21 @@ summary(model3.d)
 ```{r ab_table, results = 'asis', echo = FALSE}
 ####table set up####
 ##create a blank table
-tableprint = matrix(NA, nrow = 22, ncol = 6)
+tableprint1 = matrix(NA, nrow = 6, ncol = 6)
 colnames(tableprint) = c("Model", "Predictor", "$b$", "$SE$", "$z$", "$p$")
 
-tableprint[1:2, 1] = "Main Effects"
-tableprint[1:2, 2] = c("A vs B", "Points")
-tableprint[1:2 , 3:6 ] = coef(summary(model7))[-1, ]
+tableprint1[1:2, 1] = "Main Effects"
+tableprint1[1:2, 2] = c("A vs B", "Points")
+tableprint1[1:2 , 3:6 ] = coef(summary(model7))[-1, ]
+tableprint1[3:4, 1] = "Interactions"
+tableprint1[3:4, 2] = c("A vs B", "Points")
+tableprint1[3:4 , 3:6 ] = coef(summary(model8))[-1, ]
+tableprint1[5, 1] = "Simple Slope"
+tableprint1[5, 2] = c("A", "Points")
+tableprint1[5 , 3:6 ] = coef(summary(model3.c))[-1, ]
+tableprint1[6, 1] = "Simple Slope"
+tableprint1[6, 2] = c("B", "Points")
+tableprint1[6 , 3:6 ] = coef(summary(model3.d))[-1, ]
 ```
 
 ## Hypothesis 2
@@ -456,14 +465,21 @@ plot(hyp3$Points, hyp3$Correct)
 ```{r cd_table, results = 'asis', echo = FALSE}
 ####table set up####
 ##create a blank table
-tableprint = matrix(NA, nrow = 22, ncol = 7)
-colnames(tableprint) = c("Model", "Predictor", "$b$", "$SE$", "$df$", "$t$", "$p$")
+tableprint2 = matrix(NA, nrow = 8, ncol = 7)
+colnames(tableprint2) = c("Model", "Predictor", "$b$", "$SE$", "$df$", "$t$", "$p$")
 
-tableprint[1:2, 1] = "Main Effects"
-tableprint[1:2, 2] = c("C vs D", "Points")
-tableprint[1:2 , 3:7 ] = summary(model3)$tTable[-1 , ]
-
-
+tableprint2[1:2, 1] = "Main Effects"
+tableprint2[1:2, 2] = c("C vs D", "Points")
+tableprint2[1:2 , 3:7] = summary(model3)$tTable[-1 , ]
+tableprint2[3:4, 1] = "Interaction"
+tableprint2[3:4, 2] = c("C vs D", "Points")
+tableprint2[3:4 , 3:7 ] = summary(model4)$tTable[-1 , ]
+tableprint2[5, 1] = "Simple Slope"
+tableprint2[5, 2] = c("C", "Points")
+tableprint2[5 , 3:7 ] = summary(model3.c)$tTable[-1 , ]
+tableprint2[6, 1] = "Simple Slope"
+tableprint2[6, 2] = c("D", "Points")
+tableprint2[6 , 3:7 ] = summary(model3.d)$tTable[-1 , ]
 ```
 
 ## Hypothesis 3
@@ -544,6 +560,27 @@ model11.d = glmer(Correct ~ Points + (1|Group.Name) + (1|Word),
                   control = glmerControl(optimizer = "bobyqa"),
                   nAGQ = 1) 
 summary(model11.d) #AIC is 4775.7, significant
+
+```
+
+```{r a_table, results = 'asis', echo = FALSE}
+####table set up####
+##create a blank table
+tableprint3 = matrix(NA, nrow = 6, ncol = 6)
+colnames(tableprint3) = c("Model", "Predictor", "$b$", "$SE$", "$z$", "$p$")
+
+tableprint3[1:2, 1] = "Main Effects"
+tableprint3[1:2, 2] = c("A singles vs A groups", "Points")
+tableprint3[1:2 , 3:6 ] = coef(summary(model11))[-1, ]
+tableprint3[3:4, 1] = "Interactions"
+tableprint3[3:4, 2] = c("A singles vs A groups", "Points")
+tableprint3[3:4 , 3:6 ] = coef(summary(model11.1))[-1, ]
+tableprint3[5, 1] = "Simple Slope"
+tableprint3[5, 2] = c("A Groups", "Points")
+tableprint3[5 , 3:6 ] = coef(summary(model11.d))[-1, ]
+tableprint3[6, 1] = "Simple Slope"
+tableprint3[6, 2] = c("A Singles", "Points")
+tableprint3[6 , 3:6 ] = coef(summary(model11.c))[-1, ]
 
 ```
 
@@ -630,6 +667,27 @@ model17 = lme(Correct ~ Points,
                na.action = "na.omit",
                random = list(~1|Group.Name, ~1|Word))
 summary(model17) #AIC is 21488.97, significant
+```
+
+```{r d_table, results = 'asis', echo = FALSE}
+####table set up####
+##create a blank table
+tableprint4 = matrix(NA, nrow = 8, ncol = 7)
+colnames(tableprint4) = c("Model", "Predictor", "$b$", "$SE$", "$df$", "$t$", "$p$")
+
+tableprint4[1:2, 1] = "Main Effects"
+tableprint4[1:2, 2] = c("D Groups Versus Single", "Points")
+tableprint4[1:2 , 3:7] = summary(model14)$tTable[-1 , ]
+tableprint4[3:4, 1] = "Interaction"
+tableprint4[3:4, 2] = c("D Groups Versus Single", "Points")
+tableprint4[3:4 , 3:7 ] = summary(model15)$tTable[-1 , ]
+tableprint4[5, 1] = "Simple Slope"
+tableprint4[5, 2] = c("D Groups", "Points")
+tableprint4[5 , 3:7 ] = summary(model17)$tTable[-1 , ]
+tableprint4[6, 1] = "Simple Slope"
+tableprint4[6, 2] = c("D Singles", "Points")
+tableprint4[6 , 3:7 ] = summary(model16)$tTable[-1 , ]
+
 ```
 
 # Discussion
