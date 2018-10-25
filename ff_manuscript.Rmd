@@ -353,21 +353,21 @@ summary(model3.d)
 ```{r ab_table, results = 'asis', echo = FALSE}
 ####table set up####
 ##create a blank table
-tableprint1 = matrix(NA, nrow = 6, ncol = 6)
-colnames(tableprint) = c("Model", "Predictor", "$b$", "$SE$", "$z$", "$p$")
+tableprint1 = matrix(NA, nrow = 7, ncol = 6)
+colnames(tableprint1) = c("Model", "Predictor", "$b$", "$SE$", "$z$", "$p$")
 
 tableprint1[1:2, 1] = "Main Effects"
 tableprint1[1:2, 2] = c("A vs B", "Points")
 tableprint1[1:2 , 3:6 ] = coef(summary(model7))[-1, ]
-tableprint1[3:4, 1] = "Interactions"
-tableprint1[3:4, 2] = c("A vs B", "Points")
-tableprint1[3:4 , 3:6 ] = coef(summary(model8))[-1, ]
-tableprint1[5, 1] = "Simple Slope"
-tableprint1[5, 2] = c("A", "Points")
-tableprint1[5 , 3:6 ] = coef(summary(model3.c))[-1, ]
-tableprint1[6, 1] = "Simple Slope"
-tableprint1[6, 2] = c("B", "Points")
-tableprint1[6 , 3:6 ] = coef(summary(model3.d))[-1, ]
+tableprint1[3:5, 1] = "Interactions"
+tableprint1[3:5, 2] = c("A vs B", "Points", "Group:Points")
+tableprint1[3:5 , 3:6 ] = coef(summary(model8))[-1, ]
+tableprint1[6, 1] = "Simple Slope A"
+tableprint1[6, 2] = c("Points")
+tableprint1[6 , 3:6 ] = coef(summary(model3.c))[-1, ]
+tableprint1[7, 1] = "Simple Slope B"
+tableprint1[7, 2] = c("B")
+tableprint1[7 , 3:6 ] = coef(summary(model3.d))[-1, ]
 ```
 
 ## Hypothesis 2
