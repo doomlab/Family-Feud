@@ -358,7 +358,6 @@ colnames(tableprint1) = c("Model", "Predictor", "$b$", "$SE$", "$z$", "$p$")
 
 tableprint1[1:2, 1] = "Main Effects"
 tableprint1[1:2, 2] = c("A vs B", "Points")
-tableprint1[1:2 , 3:6 ] = coef(summary(model7))[-1, ]
 tableprint1[3:5, 1] = "Interactions"
 tableprint1[3:5, 2] = c("A vs B", "Points", "Group:Points")
 tableprint1[3:5 , 3:6 ] = coef(summary(model8))[-1, ]
@@ -366,8 +365,17 @@ tableprint1[6, 1] = "Simple Slope A"
 tableprint1[6, 2] = c("Points")
 tableprint1[6 , 3:6 ] = coef(summary(model3.c))[-1, ]
 tableprint1[7, 1] = "Simple Slope B"
-tableprint1[7, 2] = c("B")
+tableprint1[7, 2] = c("Points")
 tableprint1[7 , 3:6 ] = coef(summary(model3.d))[-1, ]
+
+tableprint1[ , 3:5] = printnum(as.numeric(tableprint1[ , 3:5]))
+tableprint1[ , 6] = printp(as.numeric(tableprint1[ , 6]))
+
+apa_table(as.data.frame(tableprint1),
+          note = "STUFF", 
+          caption = "HEADER",
+          align = c("l", rep("c", 5)))
+
 ```
 
 ## Hypothesis 2
