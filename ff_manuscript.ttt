@@ -1,0 +1,28 @@
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[tbp]
+\begin{center}
+\begin{threeparttable}
+\caption{\label{tab:ab_table}HEADER}
+\begin{tabular}{lccccc}
+\toprule
+Model & \multicolumn{1}{c}{Predictor} & \multicolumn{1}{c}{\$b\$} & \multicolumn{1}{c}{\$SE\$} & \multicolumn{1}{c}{\$z\$} & \multicolumn{1}{c}{\$p\$}\\
+\midrule
+Main Effects & A vs B & 0.19 & 0.09 & 2.18 & .029\\
+Main Effects & Points & 0.08 & 0.01 & 8.29 & < .001\\
+Interactions & A vs B & 0.11 & 0.12 & 0.93 & .351\\
+Interactions & Points & 0.08 & 0.01 & 7.81 & < .001\\
+Interactions & Group:Points & 0.00 & 0.00 & 1.03 & .305\\
+Simple Slope A & Points & 0.07 & 0.01 & 8.25 & < .001\\
+Simple Slope B & Points & 0.08 & 0.01 & 7.89 & < .001\\
+\bottomrule
+\addlinespace
+\end{tabular}
+\begin{tablenotes}[para]
+\normalsize{\textit{Note.} STUFF}
+\end{tablenotes}
+\end{threeparttable}
+\end{center}
+\end{table*}
+\efloatseparator
+ 

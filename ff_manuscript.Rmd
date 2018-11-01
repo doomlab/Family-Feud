@@ -373,12 +373,14 @@ tableprint1[7 , 3:6 ] = coef(summary(model3.d))[-1, ]
 tableprint1[ , 3:5] = printnum(as.numeric(tableprint1[ , 3:5]))
 tableprint1[ , 6] = printp(as.numeric(tableprint1[ , 6]))
 
-#apa_table(as.data.frame(tableprint1),
-          #note = "STUFF", 
-          #caption = "HEADER",
-          #align = c("l", rep("c", 5)))
+apa_table(as.data.frame(tableprint1),
+          note = "STUFF", 
+          caption = "HEADER",
+          #latex = T,
+          #escape = F,
+          align = c("l", rep("c", 5)))
 
-View(tableprint1)
+#View(tableprint1)
 #works
 
 #coef(summary(model7))
@@ -502,7 +504,7 @@ tableprint2[7 , 3:7 ] = summary(model3.d)$tTable[-1 , ]
 tableprint2[ , 3:6] = printnum(as.numeric(tableprint2[ , 3:6]))
 tableprint2[ , 7] = printp(as.numeric(tableprint2[ , 7]))
 
-View(tableprint2)
+#View(tableprint2)
 #works
 
 #summary(model3)$tTable
@@ -615,7 +617,7 @@ tableprint3[7 , 3:6 ] = coef(summary(model11.c))[-1, ]
 tableprint3[ , 3:5] = printnum(as.numeric(tableprint3[ , 3:5]))
 tableprint3[ , 6] = printp(as.numeric(tableprint3[ , 6])) # A singles, A groups Simple Slopes. Seem to be putting the Z Values in the spot of P Values, so this line will not run 
 
-View(tableprint3)
+#View(tableprint3)
 #works
 
 #coef(summary(model11))
@@ -732,7 +734,7 @@ tableprint4[7 , 3:7 ] = summary(model16)$tTable[-1 , ]
 tableprint4[ , 3:6] = printnum(as.numeric(tableprint4[ , 3:6]))
 tableprint4[ , 7] = printp(as.numeric(tableprint4[ , 7])) 
 
-View(tableprint4)
+#View(tableprint4)
 #summary(model14)$tTable
 #summary(model15)$tTable
 #summary(model17)$tTable
