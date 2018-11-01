@@ -380,6 +380,11 @@ tableprint1[ , 6] = printp(as.numeric(tableprint1[ , 6]))
 
 View(tableprint1)
 #works
+
+#coef(summary(model7))
+#coef(summary(model8))
+#coef(summary(model3.c))
+#coef(summary(model3.d))
 ```
 
 ## Hypothesis 2
@@ -477,21 +482,21 @@ plot(hyp3$Points, hyp3$Correct)
 ```{r cd_table, results = 'asis', echo = FALSE}
 ####table set up####
 ##create a blank table
-tableprint2 = matrix(NA, nrow = 6, ncol = 7)
+tableprint2 = matrix(NA, nrow = 7, ncol = 7)
 colnames(tableprint2) = c("Model", "Predictor", "$b$", "$SE$", "$df$", "$t$", "$p$")
 
 tableprint2[1:2, 1] = "Main Effects"
 tableprint2[1:2, 2] = c("C vs D", "Points")
 tableprint2[1:2 , 3:7] = summary(model3)$tTable[-1 , ]
-tableprint2[3:4, 1] = "Interaction"
-tableprint2[3:4, 2] = c("C vs D", "Points")
-tableprint2[3:4 , 3:7 ] = summary(model4)$tTable[-c(1:2) , ]
-tableprint2[5, 1] = "Simple Slope"
-tableprint2[5, 2:3] = c("C", "Points")
-tableprint2[5 , 3:7 ] = summary(model3.c)$tTable[-1 , ]  ##I think there are two model3.c
+tableprint2[3:5, 1] = "Interaction"
+tableprint2[3:5, 2] = c("C vs D", "Points", "Group: Points")
+tableprint2[3:5 , 3:7 ] = summary(model4)$tTable[-c(1) , ]
 tableprint2[6, 1] = "Simple Slope"
-tableprint2[6, 2:3] = c("D", "Points")
-tableprint2[6 , 3:7 ] = summary(model3.d)$tTable[-1 , ]
+tableprint2[6, 2:3] = c("Points")
+tableprint2[6 , 3:7 ] = summary(model3.c)$tTable[-1 , ]  ##I think there are two model3.c
+tableprint2[7, 1] = "Simple Slope"
+tableprint2[7, 2:3] = c("Points")
+tableprint2[7 , 3:7 ] = summary(model3.d)$tTable[-1 , ]
 
 #APA Format
 tableprint2[ , 3:6] = printnum(as.numeric(tableprint2[ , 3:6]))
@@ -499,6 +504,11 @@ tableprint2[ , 7] = printp(as.numeric(tableprint2[ , 7]))
 
 View(tableprint2)
 #works
+
+#summary(model3)$tTable
+#summary(model4)$tTable
+#summary(model3.c)$tTable
+#summary(model3.d)$tTable
 ```
 
 ## Hypothesis 3
@@ -585,31 +595,33 @@ summary(model11.d) #AIC is 4775.7, significant
 ```{r a_table, results = 'asis', echo = FALSE}
 ####table set up####
 ##create a blank table
-tableprint3 = matrix(NA, nrow = 8, ncol = 6)
+tableprint3 = matrix(NA, nrow = 7, ncol = 6)
 colnames(tableprint3) = c("Model", "Predictor", "$b$", "$SE$", "$z$", "$p$")
 
 tableprint3[1:2, 1] = "Main Effects"
 tableprint3[1:2, 2] = c("A singles vs A groups", "Points")
-tableprint3[1:2 , 3:6 ] = coef(summary(model11))[-1, ]
-tableprint3[3:4, 1] = "Interactions"
-tableprint3[3:4, 2] = c("A singles vs A groups", "Points")
-tableprint3[3:4 , 3:6 ] = coef(summary(model11.1))[-c(1:2), ]
-tableprint3[5:6, 1] = "Simple Slope"
-tableprint3[5:6, 2] = c("A Groups", "Points")
-tableprint3[5:6 , 3:6 ] = coef(summary(model11.d))[-1, ]
-tableprint3[7:8, 1] = "Simple Slope"
-tableprint3[7:8, 2] = c("A Singles", "Points")
-tableprint3[7:8 , 3:6 ] = coef(summary(model11.c))[-1, ]
+tableprint3[1:2 , 3:6 ] = coef(summary(model11))[-1, ] 
+tableprint3[3:5, 1] = "Interactions"
+tableprint3[3:5, 2] = c("A singles vs A groups", "Points", "Groups: Points")
+tableprint3[3:5 , 3:6 ] = coef(summary(model11.1))[-c(1), ] 
+tableprint3[6, 1] = "Simple Slope"
+tableprint3[6, 2] = c("Points")
+tableprint3[6 , 3:6 ] = coef(summary(model11.d))[-1, ] 
+tableprint3[7, 1] = "Simple Slope"
+tableprint3[7, 2] = c("Points")
+tableprint3[7 , 3:6 ] = coef(summary(model11.c))[-1, ] 
 
 #APA Format
 tableprint3[ , 3:5] = printnum(as.numeric(tableprint3[ , 3:5]))
-#tableprint3[ , 6] = printp(as.numeric(tableprint3[ , 6])) # A singles, A groups Simple Slopes. Seem to be putting the Z Values in the spot of P Values, so this line will not run 
+tableprint3[ , 6] = printp(as.numeric(tableprint3[ , 6])) # A singles, A groups Simple Slopes. Seem to be putting the Z Values in the spot of P Values, so this line will not run 
 
 View(tableprint3)
 #works
 
-coef(summary(model11.d))
-coef(summary(model11.c))
+#coef(summary(model11))
+#coef(summary(model11.1))
+#coef(summary(model11.d))
+#coef(summary(model11.c))
 ```
 
 ## Hypothesis 4
@@ -700,28 +712,31 @@ summary(model17) #AIC is 21488.97, significant
 ```{r d_table, results = 'asis', echo = FALSE}
 ####table set up####
 ##create a blank table
-tableprint4 = matrix(NA, nrow = 8, ncol = 7)
+tableprint4 = matrix(NA, nrow = 7, ncol = 7)
 colnames(tableprint4) = c("Model", "Predictor", "$b$", "$SE$", "$df$", "$t$", "$p$")
 
 tableprint4[1:2, 1] = "Main Effects"
 tableprint4[1:2, 2] = c("D Groups Versus Single", "Points")
 tableprint4[1:2 , 3:7] = summary(model14)$tTable[-1 , ]
-tableprint4[3:4, 1] = "Interaction"
-tableprint4[3:4, 2] = c("D Groups Versus Single", "Points")
-tableprint4[3:4 , 3:7 ] = summary(model15)$tTable[-c(1:2) , ]
-tableprint4[5:6, 1] = "Simple Slope"
-tableprint4[5:6, 2] = c("D Groups", "Points")
-tableprint4[5:6 , 3:7 ] = summary(model17)$tTable[-1 , ]
-tableprint4[7:8, 1] = "Simple Slope"
-tableprint4[7:8, 2] = c("D Singles", "Points")
-tableprint4[7:8 , 3:7 ] = summary(model16)$tTable[-1 , ]
+tableprint4[3:5, 1] = "Interaction"
+tableprint4[3:5, 2] = c("D Groups Versus Single", "Points", "Group: Points")
+tableprint4[3:5 , 3:7 ] = summary(model15)$tTable[-1 , ]
+tableprint4[6, 1] = "Simple Slope"
+tableprint4[6, 2] = c("Points")
+tableprint4[6 , 3:7 ] = summary(model17)$tTable[-1 , ]
+tableprint4[7, 1] = "Simple Slope"
+tableprint4[7, 2] = c("Points")
+tableprint4[7 , 3:7 ] = summary(model16)$tTable[-1 , ]
 
 #APA Format
 tableprint4[ , 3:6] = printnum(as.numeric(tableprint4[ , 3:6]))
-#tableprint4[ , 7] = printp(as.numeric(tableprint4[ , 7])) #Doing the same thing as table 3
+tableprint4[ , 7] = printp(as.numeric(tableprint4[ , 7])) 
 
 View(tableprint4)
-
+#summary(model14)$tTable
+#summary(model15)$tTable
+#summary(model17)$tTable
+#summary(model16)$tTable
 ```
 
 # Discussion
