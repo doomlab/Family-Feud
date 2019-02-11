@@ -6,8 +6,8 @@ author:
   - name          : "Erin M. Buchanan"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
-    address       : "901 S. National Ave, Springfield, MO, 65897"
-    email         : "erinbuchanan@missouristate.edu"
+    address       : "326 S. Market St., Harrisburg, PA, 17101"
+    email         : "ebuchanan@harrisburgu.edu"
   - name          : "Abigail Van Nuland"
     affiliation   : "1"
 
@@ -16,9 +16,7 @@ affiliation:
     institution   : "Missouri State University"
 
 authornote: |
-  Erin M. Buchanan is an Associate Professor of Quantitative Psychology at Missouri State University, and Abigail Van Nuland is a Masters Degree candidate at Missouri State Univeristy. 
-
-  Enter author note here.
+  Erin M. Buchanan is a Professor of Cognitive Analytics at Harrisburg University of Science and Techonology, and Abigail Van Nuland is a Masters Degree candidate at Missouri State Univeristy. 
 
 abstract: |
   One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
@@ -39,7 +37,7 @@ abstract: |
   
 keywords          : "judgments, word association, metacognition"
 
-bibliography      : ["r-references.bib"]
+#bibliography      : ["r-references.bib"]
 
 floatsintext      : no
 figurelist        : no
@@ -213,15 +211,17 @@ part_temp = longmaster[ !duplicated(longmaster$Group.Name) , ]
 
 ## Participants
 
-Participants were recruited from the Psychology Department at a large Midwestern university using an online participant management system. They were given course credit for their participation in the study. Participants were assigned to work alone (`r nrow(part_temp[grep("Single", part_temp$Condition) , ])`) or in groups (`r nrow(part_temp[grep("Group", part_temp$Condition) , ])` groups, `r sum(part_temp$Number.of.People[grep("Group", part_temp$Condition)])`) with a total of `r nrow(part_temp)` sessions and `r sum(part_temp$Number.of.People)` completing the study. No other demographic information was collected. 
+Participants were recruited from the Psychology Department at a large Midwestern university using an online participant management system. They were given course credit for their participation in the study. Participants were assigned to work alone (*n* = `r nrow(part_temp[grep("Single", part_temp$Condition) , ])`) or in groups ($n_{groups}$ = `r nrow(part_temp[grep("Group", part_temp$Condition) , ])`, *n* = `r sum(part_temp$Number.of.People[grep("Group", part_temp$Condition)])`) with a total of `r nrow(part_temp)` sessions and `r sum(part_temp$Number.of.People)` completing the study. No other demographic information was collected. 
 
 ## Materials
 
-Stimuli were selected from the University of South Florida Free Association Database [@Nelson2004]. Free association norms were created by asking participants to list the first word that comes to mind given a cue word. For example, when shown the cue *lost*, many participants will then list the target word *found*. These responses were collected over many participants and use the create a probability of eliciting the target word given a cue word called forward strength (FSG). The purpose of this study was to examine free association and judgments of associative memory over multiple cues, and therefore, cues with at least four matching target words were selected. For example, when given the cue *conditioner*, participants might list *shampoo* (FSG = .455), *hair* (FSG = .325), and *air* (FSG = .110). Cues with at least one target in each of the forward strength ranges of .40-.60, .20-.40, and <.20 were selected. Eight cue words were selected with an average of `r printnum(mean(table(newdata$cue)))` target words paired with each cue (*SD* = `r printnum(sd(table(newdata$cue)))`). The average forward strength for high strength targets was `r printnum(mean(newdata$Points[newdata$Points >= 40])/100)` (*SD* = `r printnum(sd(newdata$Points[newdata$Points >= 40])/100)`), medium strength targets `r printnum(mean(newdata$Points[newdata$Points < 40 & newdata$Points >=20])/100)` (*SD* = `r printnum(sd(newdata$Points[newdata$Points < 40 & newdata$Points >=20])/100)`), and low strength targets `r printnum(mean(newdata$Points[newdata$Points < 20])/100)` (*SD* = `r printnum(sd(newdata$Points[newdata$Points < 20])/100)`). The complete materials can be found online at OSF LINK. 
+Stimuli were selected from the University of South Florida Free Association Database [@Nelson2004]. These free association norms were created by asking participants to list the first word that comes to mind given a cue word. For example, when shown the cue *lost*, many participants will then list the target word *found*. These responses were collected over many participants and then used the create a probability of eliciting the target word given a cue word called forward strength (FSG). The purpose of this study was to examine free association and judgments of associative memory over multiple cues, and therefore, cues with at least four matching target words were selected. For example, when given the cue *conditioner*, participants might list *shampoo* (FSG = .455), *hair* (FSG = .325), and *air* (FSG = .110). Cues with at least one target in each of the forward strength ranges of .40-.60, .20-.40, and <.20 were selected. Eight cue words were selected with an average of `r printnum(mean(table(newdata$cue)))` target words paired with each cue (*SD* = `r printnum(sd(table(newdata$cue)))`). The average forward strength for high strength targets was `r printnum(mean(newdata$Points[newdata$Points >= 40])/100)` (*SD* = `r printnum(sd(newdata$Points[newdata$Points >= 40])/100)`), medium strength targets was `r printnum(mean(newdata$Points[newdata$Points < 40 & newdata$Points >=20])/100)` (*SD* = `r printnum(sd(newdata$Points[newdata$Points < 40 & newdata$Points >=20])/100)`), and low strength targets was `r printnum(mean(newdata$Points[newdata$Points < 20])/100)` (*SD* = `r printnum(sd(newdata$Points[newdata$Points < 20])/100)`). The complete materials can be found online at https://osf.io/83bkt/. 
 
 ## Procedure
 
-The eight cue-target lists were assembled into a powerpoint document that emulated a game of Family Feud. Family Feud is a game show that gives contestants category labels and asks them to list the ... 
+Multiple versions of the study were created with the eight cue-target lists described above. These were compiled into a powerpoint document that emulated a game of Family Feud. Family Feud is a game show that gives contestants category labels and asks them to list the most popular answers that people would say given the category label. For example, on the show, contestants would hear that 100 people were surveyed with the question: "Name something you might eat with a hamburger." The contestants would then guess the most popular answers (*french fries, soup, salad*) and win points based on naming the most popular responses.
+
+ho try to match the answers given to survey questions asked to groups of people (typically 100 people in the group)
 
 An experimenter will be with the participant at all times to keep score and be the game show host.  The rules of the game will be explained to the participant as follows: "You will be playing Family Feud for your experimental credit today.  We asked 100 people to say the first thing they thought of when given each category you are going to see today.  For example, when we gave people the word "steak" many of them listed "sauce, cow, sirloin".  In the following rounds, you will guess what words people listed.  (OR you will guess the number of people who listed each word)  You will receive points for your correct guesses.  Try to beat the high lab score!"
 
